@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  nexis_door:
+    container_name: nexis_door
+    image: ghcr.io/nexisltd/door-opener:latest
+    env_file: .env
+    ports:
+      - 80:8000
+    restart: unless-stopped
