@@ -31,7 +31,7 @@ def gen(camera):
     while True:
         frame = camera.get_frame()
         frame = b64encode(frame)
-        print(frame)
+        # print(frame)
         return frame
         return (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
@@ -71,6 +71,7 @@ def door_open(request):
         if conn:
             conn.disconnect()
     return render(request, 'index.html')
+
 
 class DoorConsumer(WebsocketConsumer):
     def connect(self):
