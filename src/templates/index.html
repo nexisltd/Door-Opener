@@ -11,9 +11,10 @@
       crossorigin="anonymous"
       referrerpolicy="no-referrer"
     />
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
   </head>
   <body class="min-h-screen flex justify-center items-center bg-gray-900">
-    <section class="w-5/12 md:w-full border-2 border-dashed p-5 text-center">
+    <section class="w-full md:w-5/12 border-2 border-dashed p-5 text-center">
       <div class="flex justify-center">
         <img
           class="w-20 h-10 text-center"
@@ -21,21 +22,25 @@
           alt=""
         />
       </div>
-      <div class="w-full border-2 border-red-500 bg-gray-100">
+      <div class="w-full md:w border-2 border-red-500 bg-gray-100">
         <img class="w-full object-cover" src="{% url 'livecam_feed' %}" />
       </div>
-      <button
-        id="open"
-        class="bg-blue-400 text-center w-44 md:w-36 rounded-lg h-10 font-bold text-xl mt-2"
-      >
-        Open
-      </button>
+      <div class="w-full flex justify-center my-2">
+        <button
+          id="openBtn"
+          class="btn bg-[#f1f5f9] flex justify-center items-center text-sm rounded-full w-14 h-14"
+        >
+          <i class="fa-solid fa-power-off text-2xl"></i>
+        </button>
+      </div>
 
-      <h5 class="text-white text-md my-2">
+      <h5 id="doorOpenCmdText" class="text-white text-md my-2">
         <i class="fa-solid fa-door-open text-md"></i> The door is close please
         open
       </h5>
-      <h5 id="close" class="text-white text-md my-2"></h5>
+      <h5 id="closeText" class="text-white text-md my-2">
+        <!-- <span id="timer"></span> -->
+      </h5>
       <span id="timer" class="text-white"></span>
     </section>
     <!-- script -->
