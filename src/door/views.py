@@ -1,3 +1,4 @@
+from tkinter import Frame
 from zk import ZK
 from django.views import View
 from django.shortcuts import render
@@ -9,6 +10,7 @@ from . import settings
 import asyncio
 import json
 from channels.generic.websocket import WebsocketConsumer
+from base64 import b64encode, b64decode
 
 class LiveWebCam(object):
     def __init__(self):
@@ -28,7 +30,10 @@ class LiveWebCam(object):
 def gen(camera):
     while True:
         frame = camera.get_frame()
-        yield (b'--frame\r\n'
+        frame = b64encode(frame)
+        print(frame)
+        return frame
+        return (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
         
         # success, image = frame.read()
@@ -40,10 +45,10 @@ def gen(camera):
         #     count += 1
 
 
-def livecam_feed(request):
-    # print(type(gen(LiveWebCam())))
-    return StreamingHttpResponse(gen(LiveWebCam()),
-                                 content_type='multipart/x-mixed-replace; boundary=frame')
+# def livecam_feed(request):
+#     # print(type(gen(LiveWebCam())))
+#     return StreamingHttpResponse(gen(LiveWebCam()),
+#                                  content_type='multipart/x-mixed-replace; boundary=frame')
 
 
 def index(request):
@@ -71,12 +76,16 @@ class DoorConsumer(WebsocketConsumer):
     def connect(self):
         self.accept()
 
-        self.send(text_data=json.dumps({
-            'type':'connection_established',
-            'message':'You are connected!'
-        }))
-        self.send(gen(LiveWebCam()),content_type='multipart/x-mixed-replace; boundary=frame')
-        
-    # def livecam_feed(request):
-    #     return StreamingHttpResponse(gen(LiveWebCam()),
-    #                                 content_type='multipart/x-mixed-replace; boundary=frame')
+        # def gen(camera):
+        #     while True:
+        #         frame = camera.get_frame()
+        #         yield (b'--frame\r\n'
+        #                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+
+        self.send(bytes_data=gen(LiveWebCam()))
+        # self.send(text_data=json.dumps({
+        #     'type':'connection_established',
+        #     'message':'You are connected!'
+        # }))
+        # self.send(gen(LiveWebCam()),content_type='multipart/x-mixed-replace; boundary=frame')
+    
