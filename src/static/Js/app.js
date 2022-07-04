@@ -18,6 +18,8 @@ open.addEventListener("click", () => {
     if (timeLeft < 0) {
       document.getElementById("close").innerHTML = "";
       document.getElementById("open").style.background = "#60A5FA";
+      document.getElementById("open").innerHTML = "Open";
+
     }
   }, 1000);
 });
