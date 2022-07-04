@@ -1,8 +1,12 @@
 from zk import ZK
 from django.views import View
 from django.shortcuts import render
-from django.http.response import StreamingHttpResponse
-import requests
+from django.http.response import StreamingHttpResponse,HttpResponse
+# import requests
+# from rest_framework import generics
+from rest_framework import generics, response, permissions, status, exceptions
+
+from rest_framework.views import APIView
 import cv2
 from . import settings
 
@@ -38,19 +42,39 @@ def index(request):
     return render(request, 'index.html')
 
 
-def door_open(request):
-    conn = None
-    zk = ZK(f'{settings.ZK_IP}', port=4370, timeout=5, password=f'{settings.ZK_PASSWORD}', force_udp=False,
-            ommit_ping=False)
-    try:
-        conn = zk.connect()
-        conn.disable_device()
-        conn.test_voice()
-        conn.unlock(time=1)
-        conn.enable_device()
-    except Exception as e:
-        print("Process terminate : {}".format(e))
-    finally:
-        if conn:
-            conn.disconnect()
-    return render(request, 'index.html')
+# def door_open(request):
+#     conn = None
+#     zk = ZK(f'{settings.ZK_IP}', port=4370, timeout=5, password=f'{settings.ZK_PASSWORD}', force_udp=False,
+#             ommit_ping=False)
+#     try:
+#         conn = zk.connect()
+#         conn.disable_device()
+#         conn.test_voice()
+#         conn.unlock(time=1)
+#         conn.enable_device()
+#     except Exception as e:
+#         print("Process terminate : {}".format(e))
+#     finally:
+#         if conn:
+#             conn.disconnect()
+#     return render(request, 'index.html')
+
+class Door(APIView):
+    def get(self, request):
+        conn = None
+        zk = ZK(f'{settings.ZK_IP}', port=4370, timeout=5, password=f'{settings.ZK_PASSWORD}', force_udp=False,
+                ommit_ping=False)
+        try:
+            conn = zk.connect()
+            conn.disable_device()
+            conn.test_voice()
+            conn.unlock(time=1)
+            conn.enable_device()
+        except Exception as e:
+            print("Process terminate : {}".format(e))
+        finally:
+            if conn:
+                conn.disconnect()
+        return response.Response({'detail': 'Door has been open'},
+                                 status=status.HTTP_200_OK)
+    
