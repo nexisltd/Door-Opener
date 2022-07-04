@@ -16,7 +16,7 @@ open.addEventListener("click", () => {
     // document.getElementById("progressBar").value = 10 - timeLeft;
     timeLeft -= 1;
     if (timeLeft < 0) {
-      document.getElementById("close").innerHTML = "";
+      // document.getElementById("close").innerHTML = "";
       document.getElementById("open").style.background = "#60A5FA";
       document.getElementById("open").innerHTML = "Open";
     }

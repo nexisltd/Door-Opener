@@ -13,7 +13,7 @@
     />
   </head>
   <body class="min-h-screen flex justify-center items-center bg-gray-900">
-    <section class="w-5/12 md:w-full border-2 border-dashed p-5 text-center">
+    <section class=" w-full md:w-5/12 border-2 border-dashed p-5 text-center">
       <div class="flex justify-center">
         <img
           class="w-20 h-10 text-center"
@@ -21,7 +21,7 @@
           alt=""
         />
       </div>
-      <div class="w-full border-2 border-red-500 bg-gray-100">
+      <div class="w-full border-2 border-red-500 bg-gray-100" id="img">
         <img class="w-full object-cover" src="{% url 'livecam_feed' %}" />
       </div>
       <button
@@ -42,5 +42,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script src="{% static 'Js/app.js' %}"></script>
+    <script>
+      let url=`ws://${window.location.host}/ws/socket-server/`
+      const  doorSocket = new WebSocket(url)
+      doorSocket.onmessage = function(e){
+        let data = JSON.parse()
+        console.log('data:', data)
+      }
+      
+      let form = document.getElementById('id')
+      
+    </script>
   </body>
 </html>
