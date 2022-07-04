@@ -46,7 +46,7 @@ else:
 SECRET_KEY = DJANGO_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = DJANGO_DEBUG
+DEBUG = True
 
 
 ALLOWED_HOSTS = ['*']
