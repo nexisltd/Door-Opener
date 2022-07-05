@@ -26,15 +26,13 @@ class LiveWebCam(object):
         ret, jpeg = cv2.imencode('.jpg', resize)
         return jpeg.tobytes()
 
-
 def gen(camera):
-    while True:
-        frame = camera.get_frame()
-        frame = b64encode(frame)
-        # print(frame)
-        return frame
-        return (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+    # while True:
+    frame = camera
+    # frame = b64encode(frame)
+    return frame
+        # return (b'--frame\r\n'
+        #        b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
         
         # success, image = frame.read()
         # count = 1
@@ -82,11 +80,17 @@ class DoorConsumer(WebsocketConsumer):
         #         frame = camera.get_frame()
         #         yield (b'--frame\r\n'
         #                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
-
-        self.send(bytes_data=gen(LiveWebCam()))
+        live = LiveWebCam()
+        while True:
+            self.send(bytes_data=gen(live.get_frame()))
+        self.close()
         # self.send(text_data=json.dumps({
         #     'type':'connection_established',
         #     'message':'You are connected!'
         # }))
         # self.send(gen(LiveWebCam()),content_type='multipart/x-mixed-replace; boundary=frame')
+
+    # def receive(self,bytes_data):
+    #     self.send(bytes_data=gen(LiveWebCam()))
+      
     

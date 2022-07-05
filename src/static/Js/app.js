@@ -20,21 +20,14 @@ open.addEventListener("click", () => {
       "The door will close in " + timeLeft + " second.";
     timeLeft -= 1;
     if (timeLeft < 0) {
-<<<<<<< HEAD
-      // document.getElementById("close").innerHTML = "";
-      document.getElementById("open").style.background = "#60A5FA";
-      document.getElementById("open").innerHTML = "Open";
-=======
       document.getElementById("openBtn").disabled = false;
       document.getElementById("openBtn").style.opacity = 1;
       document.getElementById("closeText").innerHTML = "";
       document.getElementById("doorOpenCmdText").innerHTML =
         "The door is close, please open.";
-
       document.getElementById("openBtn").style.background = "#e2e8f0";
       document.getElementById("openBtn").innerHTML =
         '<i class="fa-solid fa-power-off text-2xl"></i>';
->>>>>>> origin/main
     }
   }, 1000);
 });

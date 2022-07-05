@@ -23,7 +23,7 @@
         />
       </div>
       <div class="w-full md:w border-2 border-red-500 bg-gray-100">
-        {% comment %} <img class="w-full object-cover" src="{% url 'livecam_feed' %}" /> {% endcomment %}
+        <img class="w-full object-cover" id="liveFeed" />
       </div>
       <div class="w-full flex justify-center my-2">
         <button
@@ -48,10 +48,15 @@
     <script>
       let url=`ws://${window.location.host}/ws/socket-server/`
       const  doorSocket = new WebSocket(url)
-      doorSocket.onmessage = function(e){
-        let data = JSON.parse()
-        console.log('data:', data)
-      }
+      doorSocket.binaryType="arraybuffer"
+      const feedPlaceholder = document.getElementById("liveFeed")
+      
+      doorSocket.addEventListener('message', function (event) {
+        const buffer = event.data;
+        const base64String = btoa(String.fromCharCode(...new Uint8Array(buffer)));
+        {% comment %} console.log('Message from server ', base64String); {% endcomment %}
+        feedPlaceholder.src = "data:image/png;base64, "+ base64String;
+      });
       
       
     </script>
