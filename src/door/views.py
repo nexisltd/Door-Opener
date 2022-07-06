@@ -62,7 +62,7 @@ def index(request):
 class Door(APIView):
     def get(self, request):
         conn = None
-        zk = ZK(f'{settings.ZK_IP}', port=4370, timeout=5, password=f'{"settings.ZK_PASSWORD"}', force_udp=False,
+        zk = ZK(f'{settings.ZK_IP}', port=4370, timeout=5, password=f'{settings.ZK_PASSWORD}', force_udp=False,
                 ommit_ping=False)
         try:
             conn = zk.connect()
