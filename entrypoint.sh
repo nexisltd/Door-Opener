@@ -2,4 +2,4 @@
 
 python manage.py migrate
 
-gunicorn door.wsgi:application --bind 0.0.0.0:8000  --timeout 600
+gunicorn door.asgi:application -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
