@@ -2,4 +2,4 @@
 
 python manage.py migrate
 
-gunicorn door.asgi:application -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+gunicorn --bind 0.0.0.0:8000 door.asgi -w 4 -k uvicorn.workers.UvicornWorker
