@@ -1,16 +1,21 @@
+import time
 from tkinter import Frame
 from zk import ZK
 from django.views import View
 from django.shortcuts import render
 from django.http.response import StreamingHttpResponse
 import requests
+
 import cv2
 from . import settings
 
 import asyncio
 import json
 from channels.generic.websocket import WebsocketConsumer
+from channels.exceptions import StopConsumer
+from asgiref.sync import async_to_sync
 from base64 import b64encode, b64decode
+
 
 class LiveWebCam(object):
     def __init__(self):
@@ -26,27 +31,14 @@ class LiveWebCam(object):
         ret, jpeg = cv2.imencode('.jpg', resize)
         return jpeg.tobytes()
 
+
 def gen(camera):
     # while True:
     frame = camera
     # frame = b64encode(frame)
     return frame
-        # return (b'--frame\r\n'
-        #        b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
-        
-        # success, image = frame.read()
-        # count = 1
-        # while success:
-        #     cv2.imwrite("video_data/image_%d.jpg" % count, image)    
-        #     success, image = frame.read()
-        #     print('Saved image ', count)
-        #     count += 1
-
-
-# def livecam_feed(request):
-#     # print(type(gen(LiveWebCam())))
-#     return StreamingHttpResponse(gen(LiveWebCam()),
-#                                  content_type='multipart/x-mixed-replace; boundary=frame')
+    # return (b'--frame\r\n'
+    #        b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
 
 def index(request):
@@ -72,25 +64,28 @@ def door_open(request):
 
 
 class DoorConsumer(WebsocketConsumer):
+
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(args, kwargs)
+    #     self.stop = True
+
     def connect(self):
         self.accept()
 
-        # def gen(camera):
-        #     while True:
-        #         frame = camera.get_frame()
-        #         yield (b'--frame\r\n'
-        #                 b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+        # while self.stop:
+        #     self.send(bytes_data=gen(live.get_frame()))
+        # while True:
+        #     self.send(bytes_data=gen(live.get_frame()))
         live = LiveWebCam()
         while True:
-            self.send(bytes_data=gen(live.get_frame()))
-        self.close()
-        # self.send(text_data=json.dumps({
-        #     'type':'connection_established',
-        #     'message':'You are connected!'
-        # }))
-        # self.send(gen(LiveWebCam()),content_type='multipart/x-mixed-replace; boundary=frame')
+            while self.connect():
+                self.send(bytes_data=gen(live.get_frame()))
 
-    # def receive(self,bytes_data):
-    #     self.send(bytes_data=gen(LiveWebCam()))
-      
-    
+    def disconnect(self, code):
+        raise StopConsumer()
+
+    # def send_message(self, text_data=None, bytes_data=None, close=False):
+    #     live = LiveWebCam()
+    #     print("hidhk")
+    #     while True:
+    #         self.send(text_data=gen(live.get_frame()))

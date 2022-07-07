@@ -1,64 +1,64 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
-      integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+            integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+            crossorigin="anonymous"
+            referrerpolicy="no-referrer"
     />
-    <link rel="stylesheet" href="{% static 'style.css' %}" />
-  </head>
-  <body class="min-h-screen flex justify-center items-center bg-gray-900">
-    <section class="w-full md:w-5/12 border-2 border-dashed p-5 text-center">
-      <div class="flex justify-center">
+    <link rel="stylesheet" href="{% static 'style.css' %}"/>
+</head>
+<body class="min-h-screen flex justify-center items-center bg-gray-900">
+<section class="w-full md:w-5/12 border-2 border-dashed p-5 text-center">
+    <div class="flex justify-center">
         <img
-          class="w-20 h-10 text-center"
-          src="{% static 'images/nexis_logo.svg' %}"
-          alt=""
+                class="w-20 h-10 text-center"
+                src="{% static 'images/nexis_logo.svg' %}"
+                alt=""
         />
-      </div>
-      <div class="w-full md:w border-2 border-red-500 bg-gray-100">
-        <img class="w-full object-cover" id="liveFeed" />
-      </div>
-      <div class="w-full flex justify-center my-2">
+    </div>
+    <div class="w-full md:w border-2 border-red-500 bg-gray-100">
+        <img class="w-full object-cover" id="liveFeed"/>
+    </div>
+    <div class="w-full flex justify-center my-2">
         <button
-          id="openBtn"
-          class="btn border-none bg-[#f1f5f9] flex justify-center items-center text-sm rounded-full w-14 h-14"
+                id="openBtn"
+                class="btn border-none bg-[#f1f5f9] flex justify-center items-center text-sm rounded-full w-14 h-14"
         >
-          <i class="fa-solid fa-power-off text-2xl"></i>
+            <i class="fa-solid fa-power-off text-2xl"></i>
         </button>
-      </div>
+    </div>
 
-      <h5 id="doorOpenCmdText" class="text-white text-md my-2">
+    <h5 id="doorOpenCmdText" class="text-white text-md my-2">
         <i class="fa-solid fa-door-open text-md"></i> The door is close, please
         open.
-      </h5>
-      <h5 id="closeText" class="text-white text-md my-2"></h5>
-      <span id="timer" class="text-white"></span>
-    </section>
-    <!-- script -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    </h5>
+    <h5 id="closeText" class="text-white text-md my-2"></h5>
+    <span id="timer" class="text-white"></span>
+</section>
+<!-- script -->
+<script src="https://cdn.tailwindcss.com"></script>
 
-    <script src="{% static 'Js/app.js' %}"></script>
-    <script>
-      let url=`ws://${window.location.host}/ws/socket-server/`
-      const  doorSocket = new WebSocket(url)
-      doorSocket.binaryType="arraybuffer"
-      const feedPlaceholder = document.getElementById("liveFeed")
-      
-      doorSocket.addEventListener('message', function (event) {
+<script src="{% static 'Js/app.js' %}"></script>
+{#<script src='https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.js'></script>#}
+<script>
+    let url = `ws://${window.location.host}/ws/socket-server/`
+    const doorSocket = new WebSocket(url)
+
+    doorSocket.binaryType = "arraybuffer"
+    const feedPlaceholder = document.getElementById("liveFeed")
+
+    doorSocket.addEventListener('message', function (event) {
         const buffer = event.data;
         const base64String = btoa(String.fromCharCode(...new Uint8Array(buffer)));
         {% comment %} console.log('Message from server ', base64String); {% endcomment %}
-        feedPlaceholder.src = "data:image/png;base64, "+ base64String;
-      });
-      
-      
-    </script>
-  </body>
+        feedPlaceholder.src = "data:image/png;base64, " + base64String;
+    });
+</script>
+</body>
 </html>

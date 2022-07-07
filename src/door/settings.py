@@ -8,7 +8,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_DIR = BASE_DIR.joinpath('static')
 MEDIA_DIR = BASE_DIR.joinpath('media')
 
-
 if os.getenv('SECRET_KEY'):
     ON_PRODUCTION = os.environ.get('ON_PRODUCTION') == "True"
     DJANGO_SECRET_KEY = os.environ.get('SECRET_KEY')
@@ -48,9 +47,7 @@ SECRET_KEY = DJANGO_SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -65,6 +62,12 @@ INSTALLED_APPS = [
 ]
 
 ASGI_APPLICATION = "door.asgi.application"
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -98,7 +101,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'door.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
@@ -108,7 +110,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -128,7 +129,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
@@ -139,7 +139,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
