@@ -42,11 +42,3 @@ open.addEventListener("click", () => {
   
 });
 
-document.addEventListener('DOMContentLoaded', function (event) {
-    setInterval(function () {
-        var container = document.getElementById("livecam_feed_placeholder");
-        var content = container.innerHTML;
-        container.innerHTML= content; 
-    }, 12000);
-  });
-  
