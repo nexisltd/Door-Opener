@@ -7,8 +7,9 @@ open.addEventListener("click", () => {
       document.getElementById("openBtn").disabled = true;
       document.getElementById("doorOpenCmdText").innerHTML = "";
       document.getElementById("closeText").style.color = "red";
-      document.getElementById("openBtn").style.background = "#334155";
-      document.getElementById("openBtn").style.opacity = 0.6;
+      document.getElementById("powerIcon").style.color = "#fff";
+      document.getElementById("openBtn").style.background = "#f1f5f9";
+      document.getElementById("openBtn").style.opacity = 0.5;
       document.getElementById("openBtn").innerHTML =
         '<i class="fa-solid fa-power-off text-2xl"></i>';
       let timeLeft = 10;
@@ -20,15 +21,6 @@ open.addEventListener("click", () => {
           "The door will close in " + timeLeft + " second.";
         timeLeft -= 1;
         if (timeLeft < 0) {
-      
-          document.getElementById("openBtn").addEventListener("mouseover", mouseOver);
-          document.getElementById("openBtn").addEventListener("mouseout", mouseOut);
-          
-          function mouseOver() {
-            document.getElementById("openBtn").style.opacity = 0.6;          }
-          
-          function mouseOut() {
-            document.getElementById("openBtn").style.opacity = 1;          }
           document.getElementById("openBtn").disabled = false;
           document.getElementById("openBtn").style.opacity = 1;
           document.getElementById("closeText").innerHTML = "";
@@ -49,3 +41,12 @@ open.addEventListener("click", () => {
 
   
 });
+
+document.addEventListener('DOMContentLoaded', function (event) {
+    setInterval(function () {
+        var container = document.getElementById("livecam_feed_placeholder");
+        var content = container.innerHTML;
+        container.innerHTML= content; 
+    }, 12000);
+  });
+  
