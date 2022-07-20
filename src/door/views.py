@@ -75,6 +75,7 @@ class Door(APIView):
         finally:
             if conn:
                 conn.disconnect()
+                
         return response.Response({'detail': 'Door has been open'},
                                  status=status.HTTP_200_OK)
     
