@@ -2,7 +2,7 @@ FROM python:3.10.4-bullseye
 
 EXPOSE 8000
 
-RUN apt update && apt-get install ffmpeg libsm6 libxext6  -y
+RUN apt update && apt-get install ffmpeg libsm6 libxext6 iputils-ping -y
 
 ENV PYTHONDONTWRITEBYTECODE=1
 
