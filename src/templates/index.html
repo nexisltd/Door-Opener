@@ -40,15 +40,12 @@
     </h5>
     <h5 id="closeText" class="text-white text-md my-2"></h5>
     <span id="timer" class="text-white"></span>
+
 </section>
 <!-- script -->
 <script src="https://cdn.tailwindcss.com"></script>
 
 <script src="{% static 'Js/app.js' %}"></script>
-<script>
-    let url = `ws://${window.location.host}/ws/socket-server/`
-    const doorSocket = new WebSocket(url)
-</script>
 
 </body>
 </html>

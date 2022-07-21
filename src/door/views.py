@@ -1,18 +1,17 @@
 from zk import ZK
-from django.views import View
 from django.shortcuts import render
-from django.http.response import StreamingHttpResponse
 from rest_framework import response, status, exceptions
 from rest_framework.views import APIView
-import cv2
 from . import settings
 
 import json
-from channels.generic.websocket import AsyncWebsocketConsumer
+from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
+from asgiref.sync import async_to_sync
 
 
 def index(request):
     return render(request, 'index.html', context={'link': settings.WEBCAM_IP})
+
 
 class Door(APIView):
     def get(self, request):
@@ -35,13 +34,76 @@ class Door(APIView):
                                  status=status.HTTP_200_OK)
 
 
-class DoorConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        await self.accept()
-        print('connection open')
+class DoorConsumer(WebsocketConsumer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(args, kwargs)
+        self.room_group_name = 'test'
 
-    async def disconnect(self, close_code):
-        print('disconnect')
+    def connect(self):
+        async_to_sync(self.channel_layer.group_add)(
+            self.room_group_name,
+            self.channel_name
+        )
 
-    async def receive(self, text_data):
-        print('receive')
+        self.accept()
+
+
+    def receive(self, text_data):
+        text_data = json.loads(text_data)
+        message = text_data['message']
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name, {
+                'type': 'door_message',
+                'message': message
+            }
+
+        )
+        print('receive :', message)
+
+    def door_message(self, event):
+        message = event['message']
+        self.send(text_data=json.dumps({
+            'type': 'door',
+            'message': message
+
+        }))
+
+#
+# class DoorConsumer(AsyncWebsocketConsumer):
+#     async def connect(self):
+#         self.room_group_name = 'test-room'
+#         await self.channel_layer.group_add(
+#             self.room_group_name,
+#             self.channel_name
+#         )
+#         await self.accept()
+#         print('connection open')
+#
+#     async def disconnect(self, close_code):
+#         await self.channel_layer.group_discard(
+#             self.room_group_name,
+#             self.channel_name
+#         )
+#         print('disconnect')
+#
+#     async def receive(self, text_data):
+#         text_data = json.loads(text_data)
+#         message = text_data['message']
+#
+#         await self.channel_layer.group_send(
+#             self.room_group_name,
+#             {
+#                 'type': 'door',
+#                 'message': message,
+#             }
+#         )
+#         print('receive :', message)
+#         # await self.send(text_data=json.dumps(
+#         #     {
+#         #         'type': 'door',
+#         #         'message': message,
+#         #     }))
+#
+#     async def door(self, event):
+#         message = event['message']
+#         await self.send(text_data=json.dumps(message))
