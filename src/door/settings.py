@@ -8,17 +8,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_DIR = BASE_DIR.joinpath('static')
 MEDIA_DIR = BASE_DIR.joinpath('media')
 
-
 if os.getenv('SECRET_KEY'):
     ON_PRODUCTION = os.environ.get('ON_PRODUCTION') == "True"
     DJANGO_SECRET_KEY = os.environ.get('SECRET_KEY')
     DJANGO_DEBUG = os.environ.get('DEBUG') == "True"
     ZK_IP = os.environ.get('ZK_IP')
     ZK_PASSWORD = os.environ.get('ZK_PASSWORD')
-    WEBCAM_USER = os.environ.get('WEBCAM_USER')
     WEBCAM_IP = os.environ.get('WEBCAM_IP')
-    WEBCAM_PASSWORD = os.environ.get('WEBCAM_PASSWORD')
-    WEBCAM_PORT = os.environ.get('WEBCAM_PORT')
 
 
 else:
@@ -36,8 +32,6 @@ else:
     ZK_PASSWORD = env('ZK_PASSWORD')
     WEBCAM_USER = env('WEBCAM_USER')
     WEBCAM_IP = env('WEBCAM_IP')
-    WEBCAM_PASSWORD = env('WEBCAM_PASSWORD')
-    WEBCAM_PORT = env('WEBCAM_PORT')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -48,9 +42,7 @@ SECRET_KEY = DJANGO_SECRET_KEY
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = DJANGO_DEBUG
 
-
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -61,7 +53,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+    'channels',
+
 ]
 
 MIDDLEWARE = [
@@ -94,7 +87,15 @@ TEMPLATES = [
     },
 ]
 
+WSGI_APPLICATION = 'door.wsgi.application'
+
 ASGI_APPLICATION = 'door.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 
 # Database
@@ -106,7 +107,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -126,7 +126,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
@@ -137,7 +136,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
