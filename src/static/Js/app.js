@@ -1,9 +1,7 @@
 const open = document.getElementById("openBtn");
 let url = `ws://${window.location.host}/ws/socket-server/`
 const doorSocket = new WebSocket(url)
-// doorSocket.send(JSON.stringify({
-//     'message': 'Open'
-// }))
+
 doorSocket.onmessage = function (e) {
     let data = JSON.parse(e.data)
     console.log('data : ', data)
@@ -18,25 +16,36 @@ doorSocket.onmessage = function (e) {
 
 const opened = () => {
     document.getElementById("openBtn").disabled = true;
-    document.getElementById("doorOpenCmdText").innerHTML = "";
+    document.getElementById("doorOpenCmdText").style.display = "none";
+    document.getElementById("openBtn").classList.remove('bg-gray-100')
+    document.getElementById("openBtn").classList.remove('cursor-pointer')
+    document.getElementById("openBtn").classList.add('bg-gray-500')
+    document.getElementById("openBtn").classList.add('cursor-not-allowed')
     document.getElementById("closeText").style.color = "red";
-    document.getElementById("powerIcon").style.color = "#fff";
-    document.getElementById("openBtn").style.background = "#f1f5f9";
-    document.getElementById("openBtn").style.opacity = 0.5;
-    document.getElementById("openBtn").innerHTML =
-        '<i class="fa-solid fa-power-off text-2xl"></i>';
+    let timeLeft = 10;
+    let closeTimer = setInterval(function () {
+        if (timeLeft <= 0) {
+            clearInterval(closeTimer);
+        }
+        document.getElementById("closeText").innerText =
+            "The door will close in " + timeLeft + " second.";
+        timeLeft -= 1;
+        if (timeLeft < 0) {
+            doorSocket.send(JSON.stringify({
+                'message': 'Close'
+            }))
+        }
+    }, 1000);
 }
 
 const closed = () => {
     document.getElementById("openBtn").disabled = false;
-    document.getElementById("openBtn").style.opacity = 1;
     document.getElementById("closeText").innerHTML = "";
-    document.getElementById("doorOpenCmdText").innerHTML =
-        "The door is close, please open.";
-
-    document.getElementById("openBtn").style.background = "#e2e8f0";
-    document.getElementById("openBtn").innerHTML =
-        '<i class="fa-solid fa-power-off text-2xl"></i>';
+    document.getElementById("openBtn").classList.remove('bg-gray-500')
+    document.getElementById("openBtn").classList.remove('cursor-not-allowed')
+    document.getElementById("openBtn").classList.add('bg-gray-100')
+    document.getElementById("openBtn").classList.add('cursor-pointer')
+    document.getElementById("doorOpenCmdText").style.display = "block";
 }
 
 open.addEventListener("click", () => {
@@ -47,21 +56,6 @@ open.addEventListener("click", () => {
                     'message': 'Open'
                 }))
                 opened()
-                let timeLeft = 10;
-                let closeTimer = setInterval(function () {
-                    if (timeLeft <= 0) {
-                        clearInterval(closeTimer);
-                    }
-                    document.getElementById("closeText").innerText =
-                        "The door will close in " + timeLeft + " second.";
-                    timeLeft -= 1;
-                    if (timeLeft < 0) {
-                        closed()
-                        doorSocket.send(JSON.stringify({
-                            'message': 'Close'
-                        }))
-                    }
-                }, 1000);
             }
             return res.json()
         })
