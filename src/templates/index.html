@@ -28,7 +28,7 @@
     <div class="w-full flex justify-center my-2">
         <button
                 id="openBtn"
-                class="btn border-none bg-[#f1f5f9] hover:bg-gray-500 flex justify-center items-center text-sm rounded-full w-14 h-14"
+                class=" border-none bg-gray-100 cursor-pointer hover:bg-gray-500 flex justify-center items-center text-sm rounded-full w-14 h-14"
         >
             <i id="powerIcon" class="fa-solid fa-power-off text-2xl"></i>
         </button>
@@ -40,15 +40,12 @@
     </h5>
     <h5 id="closeText" class="text-white text-md my-2"></h5>
     <span id="timer" class="text-white"></span>
+
 </section>
 <!-- script -->
 <script src="https://cdn.tailwindcss.com"></script>
 
 <script src="{% static 'Js/app.js' %}"></script>
-<script>
-    let url = `ws://${window.location.host}/ws/socket-server/`
-    const doorSocket = new WebSocket(url)
-</script>
 
 </body>
 </html>
