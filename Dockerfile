@@ -9,7 +9,8 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 COPY /src/requirements.txt .
-RUN python -m pip install wheel
+RUN pip install --upgrade pip
+# RUN python -m pip install wheel
 RUN python -m pip install -r requirements.txt
 
 WORKDIR /app

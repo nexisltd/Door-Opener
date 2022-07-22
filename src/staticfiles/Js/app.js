@@ -1,5 +1,7 @@
 // Socket connect
-let url = `wss://${window.location.host}/ws/socket-server/`;
+let url = `${window.location.protocol == "https:" ? "wss" : "ws"}://${
+  window.location.host
+}/ws/socket-server/`;
 const doorSocket = new WebSocket(url);
 
 // Element defined in HTML
