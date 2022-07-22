@@ -1,51 +1,48 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
-            integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+      integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
     />
-    <link rel="stylesheet" href="{% static 'style.css' %}"/>
-</head>
-<body class="min-h-screen flex justify-center items-center bg-gray-900">
-<section class="w-full md:w-5/12 border-2 border-dashed p-5 text-center">
-    <div class="flex justify-center">
+    <link rel="stylesheet" href="{% static 'style.css' %}" />
+  </head>
+  <body class="min-h-screen flex justify-center items-center bg-gray-900">
+    <section class="w-full md:w-5/12 border-2 border-dashed p-5 text-center">
+      <div class="flex justify-center">
         <img
-                class="w-20 h-10 text-center"
-                src="{% static 'images/nexis_logo.svg' %}"
-                alt=""
+          class="w-20 h-10 text-center"
+          src="{% static 'images/nexis_logo.svg' %}"
+          alt=""
         />
-    </div>
-    <div class="w-full md:w border-2 border-red-500 bg-gray-100">
-        <img class="w-full object-cover" src="{{ link }}"/>
-    </div>
-    <div class="w-full flex justify-center my-2">
+      </div>
+      <div class="w-full md:w border-2 border-red-500 bg-gray-100">
+        <img class="w-full object-cover" src="{{ link }}" />
+      </div>
+      <div class="w-full flex justify-center my-2">
         <button
-                id="openBtn"
-                class=" border-none bg-gray-100 cursor-pointer hover:bg-gray-500 flex justify-center items-center text-sm rounded-full w-14 h-14"
+          id="openBtn"
+          class="border-none bg-gray-100 cursor-pointer hover:bg-gray-500 flex justify-center items-center text-sm rounded-full w-14 h-14"
         >
-            <i id="powerIcon" class="fa-solid fa-power-off text-2xl"></i>
+          <i id="powerIcon" class="fa-solid fa-power-off text-2xl"></i>
         </button>
-    </div>
+      </div>
 
-    <h5 id="doorOpenCmdText" class="text-white text-md my-2">
+      <h5 id="doorOpenCmdText" class="text-white text-md my-2">
         <i class="fa-solid fa-door-open text-md"></i> The door is close, please
         open.
-    </h5>
-    <h5 id="closeText" class="text-white text-md my-2"></h5>
-    <span id="timer" class="text-white"></span>
+      </h5>
+      <h5 id="closeText" class="text-red-500 text-md my-2"></h5>
+    </section>
+    <!-- script -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-</section>
-<!-- script -->
-<script src="https://cdn.tailwindcss.com"></script>
-
-<script src="{% static 'Js/app.js' %}"></script>
-
-</body>
+    <script src="{% static 'Js/app.js' %}"></script>
+  </body>
 </html>
