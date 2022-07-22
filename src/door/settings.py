@@ -87,7 +87,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'door.wsgi.application'
+# WSGI_APPLICATION = 'door.wsgi.application'
 
 ASGI_APPLICATION = 'door.asgi.application'
 
