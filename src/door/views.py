@@ -1,37 +1,15 @@
-from zk import ZK
-from django.shortcuts import render
-from rest_framework import response, status, exceptions
-from rest_framework.views import APIView
-from . import settings
-
 import json
-from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
+from time import sleep
+
 from asgiref.sync import async_to_sync
+from channels.generic.websocket import WebsocketConsumer
+from django.shortcuts import render
+
+from . import settings
 
 
 def index(request):
     return render(request, 'index.html', context={'link': settings.WEBCAM_IP})
-
-
-class Door(APIView):
-    def get(self, request):
-        conn = None
-        zk = ZK(f'{settings.ZK_IP}', port=4370, timeout=5, password=f'{settings.ZK_PASSWORD}', force_udp=False,
-                ommit_ping=False)
-        try:
-            conn = zk.connect()
-            conn.disable_device()
-            conn.test_voice()
-            conn.unlock(time=1)
-            conn.enable_device()
-        except Exception as e:
-            raise exceptions.PermissionDenied(detail=f"Process terminate : {e}")
-        finally:
-            if conn:
-                conn.disconnect()
-
-        return response.Response({'detail': 'Door has been open'},
-                                 status=status.HTTP_200_OK)
 
 
 class DoorConsumer(WebsocketConsumer):
@@ -44,66 +22,60 @@ class DoorConsumer(WebsocketConsumer):
             self.room_group_name,
             self.channel_name
         )
-
         self.accept()
-
 
     def receive(self, text_data):
         text_data = json.loads(text_data)
         message = text_data['message']
+
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name, {
-                'type': 'door_message',
-                'message': message
+                'type': "door_open",
             }
-
         )
-        print('receive :', message)
 
-    def door_message(self, event):
-        message = event['message']
+        timeoutLimit = 10
+        for time in range(timeoutLimit):
+            async_to_sync(self.channel_layer.group_send)(
+                self.room_group_name, {
+                    'type': "timer",
+                    'message': timeoutLimit - time
+                }
+            )
+
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name, {
+                'type': "door_close",
+            }
+        )
+
+    def door_open(self, event):
         self.send(text_data=json.dumps({
-            'type': 'door',
-            'message': message
-
+            'type': 'door_handler',
+            'message': "Open"
         }))
 
-#
-# class DoorConsumer(AsyncWebsocketConsumer):
-#     async def connect(self):
-#         self.room_group_name = 'test-room'
-#         await self.channel_layer.group_add(
-#             self.room_group_name,
-#             self.channel_name
-#         )
-#         await self.accept()
-#         print('connection open')
-#
-#     async def disconnect(self, close_code):
-#         await self.channel_layer.group_discard(
-#             self.room_group_name,
-#             self.channel_name
-#         )
-#         print('disconnect')
-#
-#     async def receive(self, text_data):
-#         text_data = json.loads(text_data)
-#         message = text_data['message']
-#
-#         await self.channel_layer.group_send(
-#             self.room_group_name,
-#             {
-#                 'type': 'door',
-#                 'message': message,
-#             }
-#         )
-#         print('receive :', message)
-#         # await self.send(text_data=json.dumps(
-#         #     {
-#         #         'type': 'door',
-#         #         'message': message,
-#         #     }))
-#
-#     async def door(self, event):
-#         message = event['message']
-#         await self.send(text_data=json.dumps(message))
+    def door_close(self, event):
+        self.send(text_data=json.dumps({
+            'type': 'door_handler',
+            'message': "Close"
+        }))
+
+    def timer(self, event):
+        sleep(1)
+        self.send(text_data=json.dumps({
+            'type': 'timer',
+            'message': event['message']
+        }))
+
+    # def door_handler(self, event):
+    #     timeoutLimit = 10
+    #     if event['type'] == 'door_handler' and event['message'] == 'Open':
+    #         self.send(text_data=json.dumps(
+    #             {'type': event['type'], 'message': 'Open'}))
+    #         for seconds in range(timeoutLimit):
+    #             self.send(text_data=json.dumps(
+    #                 {'type': 'timer', 'message': (timeoutLimit-seconds)}))
+    #             sleep(1)
+    #         self.send(text_data=json.dumps(
+    #             {'type': event['type'], 'message': 'Close'}))
