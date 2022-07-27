@@ -13,33 +13,22 @@ const timer = document.getElementById("timer");
 // Socket event
 doorSocket.onmessage = function (e) {
   const { type = "", message = "" } = JSON.parse(e?.data);
-  console.log(type, message);
+  // console.log(type, message);
   switch (type) {
     case "door_handler":
-      if (message === "Open") {
-        openDoor();
-      } else if (message === "Close") {
+      if (message === "Close") {
         closeDoor();
       }
       break;
     case "timer":
-      timerUpdate(message);
+      openDoor()
+      timerUpdate(message)
+    case "client":
+      console.log(message)
   }
 };
-
 // Timer
-timerUpdate = (time) => {
-  if (time === 0) return;
-  openDoor();
-  const timerInterval = setInterval(() => {
-    time--;
-    timer.innerHTML = time;
-    if (time === 0) {
-      clearInterval(timerInterval);
-      closeDoor();
-    }
-  }, 1000);
-};
+timerUpdate = (time) => timer.innerHTML = time;
 
 // Open door
 const openDoor = () => {
