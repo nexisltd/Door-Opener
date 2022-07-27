@@ -1,9 +1,12 @@
+import asyncio
+
 from zk import ZK
 from django.shortcuts import render
 from rest_framework import response, status, exceptions
 from rest_framework.views import APIView
 from . import settings
-
+# from time import sleep
+from asyncio import sleep
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer, WebsocketConsumer
 from asgiref.sync import async_to_sync
@@ -34,76 +37,39 @@ class Door(APIView):
                                  status=status.HTTP_200_OK)
 
 
-class DoorConsumer(WebsocketConsumer):
+class DoorConsumer(AsyncWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(args, kwargs)
         self.room_group_name = 'test'
 
-    def connect(self):
-        async_to_sync(self.channel_layer.group_add)(
+    async def connect(self):
+        await self.channel_layer.group_add(
             self.room_group_name,
             self.channel_name
         )
+        await self.accept()
 
-        self.accept()
-
-
-    def receive(self, text_data):
+    async def receive(self, text_data):
         text_data = json.loads(text_data)
         message = text_data['message']
-        async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name, {
-                'type': 'door_message',
-                'message': message
-            }
+        if text_data == {'message': 'Open'}:
+            time = 10
+            while time:
+                await self.channel_layer.group_send(
+                    self.room_group_name, {
+                        'type': 'door_message',
+                        'time': time,
+                        'message': message,
+                    }
+                )
+                time -= 1
 
-        )
-        print('receive :', message)
-
-    def door_message(self, event):
+    async def door_message(self, event):
         message = event['message']
-        self.send(text_data=json.dumps({
+        time = event['time']
+        await sleep(1)
+        await self.send(text_data=json.dumps({
             'type': 'door',
-            'message': message
-
+            'message': message,
+            'time': time
         }))
-
-#
-# class DoorConsumer(AsyncWebsocketConsumer):
-#     async def connect(self):
-#         self.room_group_name = 'test-room'
-#         await self.channel_layer.group_add(
-#             self.room_group_name,
-#             self.channel_name
-#         )
-#         await self.accept()
-#         print('connection open')
-#
-#     async def disconnect(self, close_code):
-#         await self.channel_layer.group_discard(
-#             self.room_group_name,
-#             self.channel_name
-#         )
-#         print('disconnect')
-#
-#     async def receive(self, text_data):
-#         text_data = json.loads(text_data)
-#         message = text_data['message']
-#
-#         await self.channel_layer.group_send(
-#             self.room_group_name,
-#             {
-#                 'type': 'door',
-#                 'message': message,
-#             }
-#         )
-#         print('receive :', message)
-#         # await self.send(text_data=json.dumps(
-#         #     {
-#         #         'type': 'door',
-#         #         'message': message,
-#         #     }))
-#
-#     async def door(self, event):
-#         message = event['message']
-#         await self.send(text_data=json.dumps(message))
