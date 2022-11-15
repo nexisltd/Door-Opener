@@ -28,11 +28,11 @@ class Door(APIView):
             conn.unlock(time=1)
             conn.enable_device()
         except Exception as e:
-            raise exceptions.PermissionDenied(detail=f"Process terminate : {e}")
+            raise exceptions.PermissionDenied(detail=f"Process terminate : {e}") from e
         finally:
             if conn:
                 conn.disconnect()
-
+        print("The door has been opened")
         return response.Response({'detail': 'Door has been open'},
                                  status=status.HTTP_200_OK)
 
