@@ -44,6 +44,7 @@ RUN pip install --upgrade pip
 COPY src/requirements.txt .
 RUN pip install -r requirements.txt
 WORKDIR /app
+RUN mkdir media
 COPY /src /app
 COPY entrypoint.sh /app
 
