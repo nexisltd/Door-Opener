@@ -26,6 +26,7 @@ ZK_PASSWORD = os.getenv("ZK_PASSWORD")
 WEBCAM_USER = os.getenv("WEBCAM_USER")
 WEBCAM_IP = os.getenv("WEBCAM_IP")
 ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*']
 # Celery Configuration Options
 CELERY_BROKER_URL = os.getenv("RABBIT_URL", os.getenv("REDIS_URL"))
 CELERY_ACCEPT_CONTENT = ["application/json"]
