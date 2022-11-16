@@ -1,10 +1,10 @@
 import platform  # For getting the operating system name
 import subprocess  # For executing a shell command
 from time import sleep
-from celery import shared_task
 
 import cv2
 import face_recognition
+from celery import shared_task
 from django.conf import settings
 from zk import ZK
 
