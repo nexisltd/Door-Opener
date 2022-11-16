@@ -22,7 +22,7 @@ def ML(self, *args, **kwargs):
         image = face_recognition.load_image_file(i.pic)
         face_encoding = face_recognition.face_encodings(image)[0]
         known_face_encodings.append(face_encoding)
-
+    matches=[]
     while True:
         # Grab a single frame of video
         ret, frame = video_capture.read()
