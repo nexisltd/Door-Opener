@@ -7,8 +7,6 @@ import face_recognition
 from celery import shared_task
 from django.conf import settings
 from zk import ZK
-
-from door.views import Door
 from ml import models
 
 
@@ -68,3 +66,19 @@ def ML(self, *args, **kwargs):
                 Door()
                 sleep(10)
                 matches = []
+
+def Door():
+    conn = None
+    zk = ZK(f'{settings.ZK_IP}', port=4370, timeout=5, password=f'{settings.ZK_PASSWORD}', force_udp=False,
+            ommit_ping=False)
+    try:
+        conn = zk.connect()
+        conn.disable_device()
+        conn.test_voice()
+        conn.unlock(time=1)
+        conn.enable_device()
+    except Exception as e:
+        print(e)
+    finally:
+        if conn:
+            conn.disconnect()
