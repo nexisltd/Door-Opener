@@ -1,46 +1,38 @@
 import os
 from pathlib import Path
 
-import environ
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+TEMPLATE_DIR = BASE_DIR.joinpath("templates")
 STATIC_DIR = BASE_DIR.joinpath("static")
 MEDIA_DIR = BASE_DIR.joinpath("media")
 
-if os.getenv("SECRET_KEY"):
-    ON_PRODUCTION = os.environ.get("ON_PRODUCTION") == "True"
-    DJANGO_SECRET_KEY = os.environ.get("SECRET_KEY")
-    DJANGO_DEBUG = os.environ.get("DEBUG") == "True"
-    ZK_IP = os.environ.get("ZK_IP")
-    ZK_PASSWORD = os.environ.get("ZK_PASSWORD")
-    WEBCAM_IP = os.environ.get("WEBCAM_IP")
-
-
-else:
-    env = environ.Env(DEBUG=(bool, False))
-
-    environ.Env.read_env()
-    environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
-
-    ON_PRODUCTION = env("ON_PRODUCTION") == "True"
-    DJANGO_SECRET_KEY = env("SECRET_KEY")
-    DJANGO_DEBUG = env("DEBUG") == "True"
-    ZK_IP = env("ZK_IP")
-    ZK_PASSWORD = env("ZK_PASSWORD")
-    WEBCAM_USER = env("WEBCAM_USER")
-    WEBCAM_IP = env("WEBCAM_IP")
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = DJANGO_SECRET_KEY
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = DJANGO_DEBUG
-
+# Django Configuration
+ON_PRODUCTION = os.getenv("ON_PRODUCTION") == "True"
+SECRET_KEY = os.getenv("SECRET_KEY")
+DEBUG = os.getenv("DEBUG") == "True"
+# Database configuration
+DJANGO_DB_ENGINE = os.getenv("DB_ENGINE", "postgresql")
+DJANGO_DB_NAME = os.getenv("DB_NAME")
+DJANGO_DB_USER = os.getenv("DB_USER")
+DJANGO_DB_PASSWORD = os.getenv("DB_PASSWORD")
+DJANGO_DB_HOST = os.getenv("DB_HOST")
+ZK_IP = os.getenv("ZK_IP")
+ZK_PASSWORD = os.getenv("ZK_PASSWORD")
+WEBCAM_USER = os.getenv("WEBCAM_USER")
+WEBCAM_IP = os.getenv("WEBCAM_IP")
 ALLOWED_HOSTS = ["*"]
+# Celery Configuration Options
+CELERY_BROKER_URL = os.getenv("RABBIT_URL", os.getenv("REDIS_URL"))
+CELERY_ACCEPT_CONTENT = ["application/json"]
+CELERY_RESULT_SERIALIZER = "json"
+CELERY_TASK_SERIALIZER = "json"
+CELERY_TIMEZONE = "UTC"
+
 
 # Application definition
 
@@ -53,7 +45,6 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "channels",
     "ml",
-    "django_celery_results",
 ]
 
 MIDDLEWARE = [
@@ -85,25 +76,29 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_APPLICATION = 'door.wsgi.application'
 
 ASGI_APPLICATION = "door.asgi.application"
 
 CHANNEL_LAYERS = {"default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}}
 
 
-# Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+if ON_PRODUCTION:
+    DATABASES = {
+        "default": {
+            "ENGINE": f"django.db.backends.{DJANGO_DB_ENGINE}",
+            "NAME": DJANGO_DB_NAME,
+            "USER": DJANGO_DB_USER,
+            "PASSWORD": DJANGO_DB_PASSWORD,
+            "HOST": DJANGO_DB_HOST,
+        }
     }
-}
-
-# Password validation
-# https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -120,41 +115,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# Internationalization
-# https://docs.djangoproject.com/en/4.0/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
-
-TIME_ZONE = "UTC"
-
+TIME_ZONE = "Asia/Dhaka"
 USE_I18N = True
-
 USE_TZ = True
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.0/howto/static-files/
-
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR.joinpath("staticfiles")
-# STATICFILES_DIRS = [STATIC_DIR]
 STATICFILES_DIRS = ["static"]
-
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
-
-# Media files
 MEDIA_URL = "/media/"
 MEDIA_ROOT = "media"
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-# Celery Configuration Options
-CELERY_BROKER_URL = os.getenv("RABBIT_URL", os.getenv("REDIS_URL"))
-# CELERY_BROKER_URL = os.getenv("REDIS_URL")
-CELERY_RESULT_BACKEND = os.getenv("REDIS_URL")
-CELERY_ACCEPT_CONTENT = ["application/json"]
-CELERY_RESULT_SERIALIZER = "json"
-CELERY_TASK_SERIALIZER = "json"
-CELERY_TIMEZONE = "UTC"

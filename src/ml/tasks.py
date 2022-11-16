@@ -1,6 +1,7 @@
 import platform  # For getting the operating system name
 import subprocess  # For executing a shell command
 from time import sleep
+from celery import shared_task
 
 import cv2
 import face_recognition
@@ -26,12 +27,13 @@ def ping(host):
     return subprocess.call(command) == 0
 
 
-def ML(request):
+@shared_task(bind=True)
+def ML(self, *args, **kwargs):
     while True:
         if ping(settings.WEBCAM_IP):
-            video_capture = cv2.VideoCapture(settings.WEBCAM_IP)
+            video_capture = cv2.VideoCapture(0)
             break
-        sleep(10)
+        sleep(60)
 
     # Load a sample picture and learn how to recognize it.
     known_face_encodings = []
