@@ -25,6 +25,7 @@ ZK_IP = os.getenv("ZK_IP")
 ZK_PASSWORD = os.getenv("ZK_PASSWORD")
 WEBCAM_USER = os.getenv("WEBCAM_USER")
 WEBCAM_IP = os.getenv("WEBCAM_IP")
+ML_CAM_IP=os.getenv("ML_CAM_IP")
 ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = ['https://door.local.nexisltd.com']
 # Celery Configuration Options

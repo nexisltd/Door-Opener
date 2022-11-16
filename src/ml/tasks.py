@@ -15,7 +15,7 @@ def ping(host):
     Returns True if host (str) responds to a ping request.
     Remember that a host may not respond to a ping (ICMP) request even if the host name is valid.
     """
-
+    if host.startswith()
     # Option for the number of packets as a function of
     param = "-n" if platform.system().lower() == "windows" else "-c"
 
@@ -27,11 +27,13 @@ def ping(host):
 
 @shared_task(bind=True)
 def ML(self, *args, **kwargs):
-    while True:
-        if ping(settings.WEBCAM_IP):
-            video_capture = cv2.VideoCapture(0)
-            break
-        sleep(60)
+    # while True:
+    #     if ping(settings.WEBCAM_IP):
+    #         video_capture = cv2.VideoCapture(0)
+    #         break
+    #     sleep(60)
+
+    video_capture = cv2.VideoCapture(settings.ML_CAM_IP)
 
     # Load a sample picture and learn how to recognize it.
     known_face_encodings = []
@@ -44,6 +46,7 @@ def ML(self, *args, **kwargs):
     while True:
         # Grab a single frame of video
         ret, frame = video_capture.read()
+        print('Capturing has been started')
 
         # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
         rgb_frame = frame[:, :, ::-1]

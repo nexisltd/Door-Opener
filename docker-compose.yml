@@ -8,19 +8,19 @@ services:
       - door-redis
     env_file: .env
     restart: unless-stopped
-    volumes:
-      - door_images:/app/media
     networks:
       - proxy
       - door_backend
+    volumes:
+      - door_images:/app/media
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.door.entrypoints=http"
-      - "traefik.http.routers.door.rule=Host(`yourdomain.com`)"
+      - "traefik.http.routers.door.rule=Host(`door.local.nexisltd.com.com`)"
       - "traefik.http.middlewares.door-https-redirect.redirectscheme.scheme=https"
       - "traefik.http.routers.door.middlewares=door-https-redirect"
       - "traefik.http.routers.door-secure.entrypoints=https"
-      - "traefik.http.routers.door-secure.rule=Host(`yourdomain.com`)"
+      - "traefik.http.routers.door-secure.rule=Host(`door.local.nexisltd.com`)"
       - "traefik.http.routers.door-secure.tls=true"
       - "traefik.http.routers.door-secure.service=door"
       - "traefik.http.services.door.loadbalancer.server.port=8000"
@@ -35,7 +35,8 @@ services:
     restart: unless-stopped
     networks:
       - door_backend
-    entrypoint: celery -A door worker
+#    entrypoint: tail -f /dev/null
+    entrypoint: celery -A door worker -l INFO
     tty: true
 
   door-redis:
