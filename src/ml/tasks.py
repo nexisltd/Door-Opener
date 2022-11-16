@@ -13,6 +13,10 @@ from ml import models
 
 @shared_task(bind=True)
 def ML(self, *args, **kwargs):
+    """
+    It takes a picture from the camera, compares it to the pictures in the database, if it finds a
+    match, it opens the door
+    """
     video_capture = cv2.VideoCapture(settings.ML_CAM_IP)
 
     # Load a sample picture and learn how to recognize it.
@@ -23,6 +27,7 @@ def ML(self, *args, **kwargs):
         face_encoding = face_recognition.face_encodings(image)[0]
         known_face_encodings.append(face_encoding)
     matches=[]
+
     while True:
         # Grab a single frame of video
         ret, frame = video_capture.read()
@@ -41,12 +46,12 @@ def ML(self, *args, **kwargs):
             matches = face_recognition.compare_faces(
                 known_face_encodings, face_encoding
             )
-            # If a match was found in known_face_encodings, open the door and clean previous matches.
+        # If a match was found in known_face_encodings, open the door and clean previous matches.
         if matches:
-            matches=[]
             print("matched")
             Door()
             sleep(10)
+        matches=[]
     
 
 def Door():
