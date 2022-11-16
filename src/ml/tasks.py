@@ -46,7 +46,9 @@ def ML(self, *args, **kwargs):
                 print("matched")
                 Door()
                 sleep(10)
-                matches = []
+                break
+            else:
+                continue
 
 def Door():
     conn = None
