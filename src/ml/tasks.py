@@ -1,5 +1,4 @@
-# import platform  # For getting the operating system name
-# import subprocess  # For executing a shell command
+
 from time import sleep
 
 import cv2
@@ -10,29 +9,10 @@ from zk import ZK
 from ml import models
 
 
-# def ping(host):
-#     """
-#     Returns True if host (str) responds to a ping request.
-#     Remember that a host may not respond to a ping (ICMP) request even if the host name is valid.
-#     """
-#     if host.startswith()
-#     # Option for the number of packets as a function of
-#     param = "-n" if platform.system().lower() == "windows" else "-c"
-
-#     # Building the command. Ex: "ping -c 1 google.com"
-#     command = ["ping", param, "1", host]
-
-#     return subprocess.call(command) == 0
 
 
 @shared_task(bind=True)
 def ML(self, *args, **kwargs):
-    # while True:
-    #     if ping(settings.WEBCAM_IP):
-    #         video_capture = cv2.VideoCapture(0)
-    #         break
-    #     sleep(60)
-
     video_capture = cv2.VideoCapture(settings.ML_CAM_IP)
 
     # Load a sample picture and learn how to recognize it.
@@ -46,8 +26,6 @@ def ML(self, *args, **kwargs):
     while True:
         # Grab a single frame of video
         ret, frame = video_capture.read()
-        print('Capturing has been started')
-
         # Convert the image from BGR color (which OpenCV uses) to RGB color (which face_recognition uses)
         rgb_frame = frame[:, :, ::-1]
 
@@ -67,8 +45,8 @@ def ML(self, *args, **kwargs):
             if True in matches:
                 print("matched")
                 Door()
-                sleep(10)
                 matches = []
+                sleep(10)
 
 def Door():
     conn = None
