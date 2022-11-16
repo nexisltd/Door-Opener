@@ -42,11 +42,11 @@ def ML(self, *args, **kwargs):
                 known_face_encodings, face_encoding
             )
             # If a match was found in known_face_encodings, just use the first one.
-            if True in matches:
+            if bool(matches):
                 print("matched")
                 Door()
-                matches = []
                 sleep(10)
+            matches = []
 
 def Door():
     conn = None
