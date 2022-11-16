@@ -41,13 +41,13 @@ def ML(self, *args, **kwargs):
             matches = face_recognition.compare_faces(
                 known_face_encodings, face_encoding
             )
-            # If a match was found in known_face_encodings, just use the first one.
-            if matches:
-                matches=[]
-                print("matched")
-                Door()
-                sleep(10)
-                break
+            # If a match was found in known_face_encodings, open the door and clean previous matches.
+        if matches:
+            matches=[]
+            print("matched")
+            Door()
+            sleep(10)
+    
 
 def Door():
     conn = None
